@@ -3,11 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const cargoLabel = document.getElementById("cargoLabel");
 
   form.rol.addEventListener("change", () => {
-    if (form.rol.value === "Administrativo") {
-      cargoLabel.style.display = "block";
-    } else {
-      cargoLabel.style.display = "none";
-    }
+    cargoLabel.style.display = form.rol.value === "Administrativo" ? "block" : "none";
   });
 
   form.addEventListener("submit", e => {
