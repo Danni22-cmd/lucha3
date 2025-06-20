@@ -2,7 +2,9 @@ document.getElementById("formulario").addEventListener("submit", function(e) {
   e.preventDefault();
 
   const nombre = document.getElementById("nombre").value;
-  const documento = document.getElementById("documento").value;
+  const tipoDoc = document.getElementById("tipoDocumento").value;
+  const numeroDoc = document.getElementById("numeroDocumento").value;
+  const documento = `${tipoDoc} ${numeroDoc}`;
   const contacto = document.getElementById("contacto").value;
   const sangre = document.getElementById("sangre").value;
   const rol = document.getElementById("rol").value;
@@ -18,8 +20,8 @@ document.getElementById("formulario").addEventListener("submit", function(e) {
   reader.onload = function () {
     document.getElementById("foto-preview").src = reader.result;
 
-    // Generar QR con enlace
-    const qrData = `https://identilucha.vercel.app/carnet/${encodeURIComponent(documento)}`;
+    // Generar QR con enlace (aquí puedes cambiar la URL base si quieres otra)
+    const qrData = `https://identilucha.vercel.app/carnet/${encodeURIComponent(numeroDoc)}`;
     const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=60x60`;
     const qrImg = document.getElementById("qr-code");
     qrImg.src = qrCodeUrl;
@@ -44,7 +46,7 @@ function generarPDF(carnet) {
     html2canvas: { scale: 3, useCORS: true },
     jsPDF: {
       unit: 'in',
-      format: [3.5, 2.25],
+      format: [3.5, 2.25],  // Carnet horizontal en pulgadas
       orientation: 'landscape'
     }
   };

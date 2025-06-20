@@ -9,18 +9,30 @@
 <body>
   <form id="formulario">
     <h1>Generar Carnet Deportivo</h1>
+    
     <input type="text" id="nombre" placeholder="Nombres completos" required />
-    <input type="text" id="documento" placeholder="Tipo y número de documento" required />
+    
+    <select id="tipoDocumento" required>
+      <option value="">Tipo de documento</option>
+      <option value="CC">Cédula de ciudadanía</option>
+      <option value="TI">Tarjeta de identidad</option>
+      <option value="CE">Cédula de extranjería</option>
+    </select>
+
+    <input type="text" id="numeroDocumento" placeholder="Número de documento" required />
+
     <input type="text" id="contacto" placeholder="Número de contacto de emergencia" required />
     <input type="text" id="sangre" placeholder="Tipo de sangre" required />
+
     <select id="rol">
       <option value="DEPORTISTA">Deportista</option>
       <option value="ENTRENADOR">Entrenador</option>
       <option value="JUEZ">Juez</option>
-      <option value="ADMINISTRATIVO - PRESIDENTE">Presidente</option>
+      <option value="ADMINISTRATIVO - PRESIDENTE">Presidenta</option>
       <option value="ADMINISTRATIVO - TESORERO">Tesorero</option>
       <option value="ADMINISTRATIVO - COMITÉ">Comité Interdisciplinario</option>
     </select>
+
     <input type="file" id="foto" accept="image/*" required />
     <button type="submit">Generar Carnet</button>
   </form>
