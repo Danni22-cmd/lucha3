@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Carnet Generado</title>
+</head>
+<body>
+  <div id="carnet">
+    <h2>Liga Santandereana de Lucha Olímpica</h2>
+    <p id="nombre"></p>
+    <p id="documento"></p>
+    <p id="emergencia"></p>
+    <p id="sangre"></p>
+    <p id="rol"></p>
+    <p id="cargo" style="display:none;"></p>
+    <img id="foto" width="120" /><br/>
+    <canvas id="qrCanvas"></canvas>
+    <br/><button onclick="window.print()">Descargar PDF</button>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    document.getElementById('nombre').textContent = 'Nombre: ' + params.get('nombre');
+    document.getElementById('documento').textContent = 'Documento: ' + params.get('tipoDocumento') + ' ' + params.get('numeroDocumento');
+    document.getElementById('emergencia').textContent = 'Contacto de emergencia: ' + params.get('emergencia');
+    document.getElementById('sangre').textContent = 'Tipo de sangre: ' + params.get('sangre');
+    document.getElementById('rol').textContent = 'Rol: ' + params.get('rol');
+    document.getElementById('foto').src = params.get('foto');
+
+    if (params.get('rol') === 'Administrativo') {
+      document.getElementById('cargo').style.display = 'block';
+      document.getElementById('cargo').textContent = 'Cargo: ' + params.get('cargo');
+    }
+
+    // Generar QR
+    const canvas = document.getElementById("qrCanvas");
+    const url = window.location.href;
+    import("https://cdn.jsdelivr.net/npm/qrious").then(QRious => {
+      new QRious.default({
+        element: canvas,
+        value: url,
+        size: 100
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Identilucha - Liga Santandereana</title>
+  <script defer src="js/script.js"></script>
+</head>
+<body>
+  <h1>Registro de Carnets - Liga Santandereana de Lucha Olímpica</h1>
+  <form id="formulario">
+    <label>Nombres completos: <input type="text" name="nombre" required></label><br/>
+    <label>Tipo de documento: <input type="text" name="tipoDocumento" required></label><br/>
+    <label>Número de identificación: <input type="text" name="numeroDocumento" required></label><br/>
+    <label>Contacto de emergencia: <input type="text" name="emergencia" required></label><br/>
+    <label>Tipo de sangre: <input type="text" name="sangre" required></label><br/>
+    <label>Foto (URL): <input type="url" name="foto" required></label><br/>
+    <label>Rol:
+      <select name="rol" required>
+        <option value="Deportista">Deportista</option>
+        <option value="Entrenador">Entrenador</option>
+        <option value="Juez">Juez</option>
+        <option value="Administrativo">Administrativo</option>
+      </select>
+    </label><br/>
+    <label id="cargoLabel" style="display:none;">Cargo (si es administrativo): <input type="text" name="cargo" /></label><br/>
+    <button type="submit">Generar carnet</button>
+  </form>
+</body>
+</html>
