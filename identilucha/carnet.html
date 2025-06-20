@@ -1,72 +1,59 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Carnet Digital - Liga Santandereana de Lucha Olímpica</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>Carnet Identilucha</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
       text-align: center;
-      padding: 20px;
+      margin: 30px;
+      background-color: #f9f9f9;
     }
-
-    .carnet-contenedor {
-      background-color: #fff;
+    #carnet {
+      background-color: white;
       border: 2px solid #003300;
       border-radius: 10px;
-      width: 300px;
+      width: 320px;
       margin: auto;
       padding: 20px;
-      position: relative;
     }
-
-    .logo-carnet {
+    img.logo {
       width: 60px;
       position: absolute;
       top: 10px;
       left: 10px;
     }
-
-    .foto {
+    img.foto {
       width: 100px;
       height: 120px;
       object-fit: cover;
       border-radius: 5px;
-      margin: 10px auto;
     }
-
-    .qr {
+    img.qr {
       width: 80px;
-      margin-top: 10px;
-    }
-
-    h2 {
-      font-size: 16px;
-      margin-bottom: 10px;
-      color: #003300;
-    }
-
-    p {
-      margin: 5px 0;
     }
   </style>
 </head>
 <body>
-
-  <h1>Carnet Digital</h1>
-  <div id="carnet"></div>
+  <div id="carnet">
+    <h3>LIGA SANTANDEREANA DE LUCHA OLÍMPICA</h3>
+    <div id="contenido"></div>
+  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCqtUXbPvDtOcuZLwFsxll3TD7F3ICQzFo",
       authDomain: "identilucha.firebaseapp.com",
       projectId: "identilucha",
-      storageBucket: "identilucha.firebasestorage.app",
+      storageBucket: "identilucha.appspot.com",
       messagingSenderId: "338101541555",
       appId: "1:338101541555:web:edb3e5143ba87580c8eec6"
     };
@@ -74,38 +61,33 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const docId = urlParams.get("doc");
+    const params = new URLSearchParams(window.location.search);
+    const docId = params.get("doc");
 
-    async function cargarCarnet() {
+    if (!docId) {
+      document.getElementById("contenido").innerHTML = "<p>Error: no se proporcionó documento.</p>";
+    } else {
       const ref = doc(db, "carnets", docId);
-      const snapshot = await getDoc(ref);
-
-      if (!snapshot.exists()) {
-        document.getElementById("carnet").innerHTML = "<p>No se encontró el carnet.</p>";
-        return;
-      }
-
-      const data = snapshot.data();
-
-      document.getElementById("carnet").innerHTML = `
-        <div class="carnet-contenedor">
-          <img src="logo.png" class="logo-carnet" />
-          <h2>LIGA SANTANDEREANA DE LUCHA OLÍMPICA</h2>
-          <img src="${data.fotoURL}" class="foto" />
-          <p><strong>${data.nombre}</strong></p>
-          <p>${data.tipoDocumento}: ${data.documento}</p>
-          <p>Tipo de sangre: ${data.sangre}</p>
-          <p>Contacto emergencia: ${data.emergencia}</p>
-          <p>Rol: ${data.rol}</p>
-          ${data.rol === "ADMINISTRATIVO" ? `<p>Cargo: ${data.cargo}</p>` : ""}
-          <img src="${data.qrURL}" class="qr" />
-        </div>
-      `;
+      getDoc(ref).then((docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          document.getElementById("contenido").innerHTML = `
+            <img src="${data.fotoURL}" class="foto" /><br>
+            <p><strong>${data.nombre}</strong></p>
+            <p>${data.tipoDocumento}: ${data.documento}</p>
+            <p>Tipo de sangre: ${data.sangre}</p>
+            <p>Contacto emergencia: ${data.emergencia}</p>
+            <p>Rol: ${data.rol}</p>
+            ${data.rol === "ADMINISTRATIVO" ? `<p>Cargo: ${data.cargo}</p>` : ""}
+            <img src="${data.qrURL}" class="qr" />
+          `;
+        } else {
+          document.getElementById("contenido").innerHTML = "<p>No se encontró el carnet.</p>";
+        }
+      }).catch((error) => {
+        document.getElementById("contenido").innerHTML = `<p>Error: ${error.message}</p>`;
+      });
     }
-
-    cargarCarnet();
   </script>
-
 </body>
 </html>
