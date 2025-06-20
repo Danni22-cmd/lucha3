@@ -1,33 +1,61 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Identilucha - Carnet Digital</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Carnet - Liga Santandereana de Lucha Olímpica</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="card">
-    <div class="header">
-      <img src="logo.png" class="logo" alt="Logo Liga" />
-      <h1>Liga Santandereana de Lucha Olímpica</h1>
-    </div>
 
-    <div class="body">
-      <img id="foto" class="foto" src="" alt="Foto del deportista" />
-      <div class="info">
-        <p><strong>Nombre:</strong> <span id="nombre"></span></p>
-        <p><strong>Documento:</strong> <span id="documento"></span></p>
-        <p><strong>Contacto de emergencia:</strong> <span id="contacto"></span></p>
-        <p><strong>Tipo de sangre:</strong> <span id="sangre"></span></p>
-        <p><strong>Rol:</strong> <span id="rol"></span></p>
+  <div class="container">
+    <h1>Generador de Carnet</h1>
+    <form id="carnet-form">
+      <label>Nombre completo:</label>
+      <input type="text" id="nombre" required>
+
+      <label>Tipo y número de documento:</label>
+      <input type="text" id="documento" required>
+
+      <label>Contacto de emergencia:</label>
+      <input type="text" id="contacto" required>
+
+      <label>Tipo de sangre:</label>
+      <input type="text" id="sangre" required>
+
+      <label>Rol:</label>
+      <select id="rol" required onchange="mostrarCargo(this.value)">
+        <option value="">Selecciona...</option>
+        <option value="Deportista">Deportista</option>
+        <option value="Entrenador">Entrenador</option>
+        <option value="Juez">Juez</option>
+        <option value="Administrativo">Administrativo</option>
+      </select>
+
+      <div id="cargo-container" style="display: none;">
+        <label>Cargo (si es administrativo):</label>
+        <input type="text" id="cargo">
       </div>
-      <img id="qr" class="qr" src="" alt="QR Code" />
-    </div>
 
-    <button onclick="generarPDF()">Descargar carnet en PDF</button>
+      <label>Foto:</label>
+      <input type="file" id="foto" accept="image/*" required>
+
+      <button type="submit">Generar carnet</button>
+    </form>
+
+    <div id="carnet-container" style="margin-top: 40px;"></div>
   </div>
 
+  <!-- Librería para PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="script.js"></script>
+
+  <script>
+    function mostrarCargo(valor) {
+      const cargoDiv = document.getElementById("cargo-container");
+      cargoDiv.style.display = valor === "Administrativo" ? "block" : "none";
+    }
+  </script>
+
 </body>
 </html>
