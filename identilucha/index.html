@@ -1,61 +1,114 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Carnet - Liga Santandereana de Lucha Olímpica</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IdentiLucha | Crear Carnet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f5;
+      padding: 20px;
+    }
+    h1 {
+      color: #11511a;
+      text-align: center;
+    }
+    form {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    label {
+      margin-top: 10px;
+      display: block;
+      font-weight: bold;
+    }
+    #cargo-container {
+      display: none;
+    }
+    button {
+      background-color: #11511a;
+      color: white;
+      padding: 10px;
+      border: none;
+      margin-top: 20px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #0e4415;
+    }
+  </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>Generador de Carnet</h1>
-    <form id="carnet-form">
-      <label>Nombre completo:</label>
-      <input type="text" id="nombre" required>
+  <h1>Crear Carnet Deportivo</h1>
+  <form id="formulario">
+    <label for="nombre">Nombres completos</label>
+    <input type="text" id="nombre" required />
 
-      <label>Tipo y número de documento:</label>
-      <input type="text" id="documento" required>
+    <label for="documento">Número de documento</label>
+    <input type="text" id="documento" required />
 
-      <label>Contacto de emergencia:</label>
-      <input type="text" id="contacto" required>
+    <label for="contacto">Número de contacto de emergencia</label>
+    <input type="text" id="contacto" required />
 
-      <label>Tipo de sangre:</label>
-      <input type="text" id="sangre" required>
+    <label for="sangre">Tipo de sangre</label>
+    <select id="sangre" required>
+      <option value="">Selecciona...</option>
+      <option>O+</option>
+      <option>O-</option>
+      <option>A+</option>
+      <option>A-</option>
+      <option>B+</option>
+      <option>B-</option>
+      <option>AB+</option>
+      <option>AB-</option>
+    </select>
 
-      <label>Rol:</label>
-      <select id="rol" required onchange="mostrarCargo(this.value)">
-        <option value="">Selecciona...</option>
-        <option value="Deportista">Deportista</option>
-        <option value="Entrenador">Entrenador</option>
-        <option value="Juez">Juez</option>
-        <option value="Administrativo">Administrativo</option>
-      </select>
+    <label for="rol">Rol</label>
+    <select id="rol" required>
+      <option value="">Selecciona...</option>
+      <option>DEPORTISTA</option>
+      <option>ENTRENADOR</option>
+      <option>JUEZ</option>
+      <option>ADMINISTRATIVO</option>
+    </select>
 
-      <div id="cargo-container" style="display: none;">
-        <label>Cargo (si es administrativo):</label>
-        <input type="text" id="cargo">
-      </div>
+    <div id="cargo-container">
+      <label for="cargo">Cargo administrativo</label>
+      <input type="text" id="cargo" placeholder="Ej: PRESIDENTA, TESORERO..." />
+    </div>
 
-      <label>Foto:</label>
-      <input type="file" id="foto" accept="image/*" required>
+    <label for="foto">Foto del carnet</label>
+    <input type="file" id="foto" accept="image/*" required />
 
-      <button type="submit">Generar carnet</button>
-    </form>
+    <button type="submit">Generar Carnet</button>
+  </form>
 
-    <div id="carnet-container" style="margin-top: 40px;"></div>
-  </div>
-
-  <!-- Librerías -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="script.js"></script>
-
+  <!-- Firebase -->
+  <script type="module" src="script.js"></script>
   <script>
-    function mostrarCargo(valor) {
-      const cargoDiv = document.getElementById("cargo-container");
-      cargoDiv.style.display = valor === "Administrativo" ? "block" : "none";
-    }
-  </script>
+    const rolSelect = document.getElementById("rol");
+    const cargoContainer = document.getElementById("cargo-container");
 
+    rolSelect.addEventListener("change", () => {
+      if (rolSelect.value === "ADMINISTRATIVO") {
+        cargoContainer.style.display = "block";
+      } else {
+        cargoContainer.style.display = "none";
+      }
+    });
+  </script>
 </body>
 </html>

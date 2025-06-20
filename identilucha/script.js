@@ -1,22 +1,42 @@
-document.getElementById("carnet-form").addEventListener("submit", function (e) {
+// Firebase SDK v10+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// Tu configuración de Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyCqtUXbPvDtOcuZLwFsxll3TD7F3ICQzFo",
+  authDomain: "identilucha.firebaseapp.com",
+  projectId: "identilucha",
+  storageBucket: "identilucha.firebasestorage.app",
+  messagingSenderId: "338101541555",
+  appId: "1:338101541555:web:edb3e5143ba87580c8eec6"
+};
+
+// Inicializar Firebase y Firestore
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Escuchar el formulario
+document.getElementById("formulario").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const nombre = document.getElementById("nombre").value;
-  const documento = document.getElementById("documento").value;
-  const contacto = document.getElementById("contacto").value;
+  const nombre = document.getElementById("nombre").value.trim();
+  const documento = document.getElementById("documento").value.trim();
+  const contacto = document.getElementById("contacto").value.trim();
   const sangre = document.getElementById("sangre").value;
   const rol = document.getElementById("rol").value;
-  const cargo = document.getElementById("cargo").value;
+  const cargo = document.getElementById("cargo")?.value || "";
   const foto = document.getElementById("foto").files[0];
 
+  if (!nombre || !documento || !contacto || !sangre || !foto) {
+    alert("Por favor, completa todos los campos.");
+    return;
+  }
+
+  const slug = nombre.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
+
   const reader = new FileReader();
-  reader.onload = function () {
-    const fotoBase64 = reader.result;
-
-    // Crear un identificador único
-    const slug = nombre.trim().toLowerCase().replace(/\s+/g, '-');
-
-    // Guardar datos en localStorage para simulación de base de datos
+  reader.onload = async function (e) {
     const carnetData = {
       nombre,
       documento,
@@ -24,70 +44,18 @@ document.getElementById("carnet-form").addEventListener("submit", function (e) {
       sangre,
       rol,
       cargo,
-      foto: fotoBase64
+      foto: e.target.result,
+      slug
     };
 
-    localStorage.setItem(`carnet-${slug}`, JSON.stringify(carnetData));
-
-    // Generar HTML
-    const carnetHTML = `
-      <div id="carnet">
-        <img src="logo.png" class="logo" alt="Logo Liga">
-        <img src="${fotoBase64}" alt="Foto" class="foto">
-        <div class="info">
-          <h2>LIGA SANTANDEREANA<br>DE LUCHA OLÍMPICA</h2>
-          <strong>${nombre}</strong><br>
-          CC: ${documento}<br>
-          Emergencia: ${contacto}<br>
-          Sangre: ${sangre}<br>
-          Rol: ${rol}${rol === "Administrativo" ? ` - ${cargo}` : ""}
-        </div>
-        <img id="qr-code" class="qr" alt="QR Code">
-        <div style="text-align: center; width: 100%; position: absolute; bottom: 6px;">
-          <button onclick="descargarPDF()">Descargar carnet en PDF</button>
-        </div>
-      </div>
-    `;
-
-    document.getElementById("carnet-container").innerHTML = carnetHTML;
-
-    // Crear el QR con link a la página pública
-    const qrUrl = `https://identilucha.com/ver-carnet.html?slug=${slug}`;
-    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrUrl)}&size=60x60`;
-
-    const qrImg = document.getElementById("qr-code");
-    qrImg.onload = () => console.log("QR cargado correctamente");
-    qrImg.onerror = () => console.error("Error cargando QR");
-    qrImg.src = qrCodeUrl;
+    try {
+      await setDoc(doc(db, "carnets", slug), carnetData);
+      window.location.href = `ver-carnet.html?slug=${slug}`;
+    } catch (err) {
+      console.error("Error al guardar en Firestore:", err);
+      alert("Hubo un error al guardar el carnet.");
+    }
   };
+
   reader.readAsDataURL(foto);
 });
-
-function descargarPDF() {
-  const carnet = document.getElementById("carnet");
-  const boton = carnet.querySelector("button");
-  const qr = carnet.querySelector("#qr-code");
-
-  boton.style.display = "none"; // Ocultar botón
-
-  // Esperar que el QR esté cargado
-  if (!qr.complete || qr.naturalHeight === 0) {
-    qr.onload = () => generarPDF(carnet, boton);
-  } else {
-    generarPDF(carnet, boton);
-  }
-}
-
-function generarPDF(carnet, boton) {
-  const opt = {
-    margin: 0.2,
-    filename: 'carnet_digital.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-  };
-
-  html2pdf().from(carnet).set(opt).save().then(() => {
-    boton.style.display = "inline-block"; // Mostrar botón nuevamente
-  });
-}
