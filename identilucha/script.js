@@ -71,12 +71,16 @@ function generarPDF(carnet, boton) {
   const opt = {
     margin: 0,
     filename: 'carnet_digital.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { unit: 'in', format: [3.5, 2.25], orientation: 'landscape' } // 🟩 Formato horizontal tipo carnet
+    image: { type: 'jpeg', quality: 1 },
+    html2canvas: { scale: 3, useCORS: true },
+    jsPDF: {
+      unit: 'in',
+      format: [3.5, 2.25], // Formato real de carnet
+      orientation: 'landscape'
+    }
   };
 
   html2pdf().from(carnet).set(opt).save().then(() => {
-    boton.style.display = "inline-block"; // Mostrar botón nuevamente
+    boton.style.display = "inline-block";
   });
 }
