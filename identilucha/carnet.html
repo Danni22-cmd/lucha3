@@ -2,111 +2,110 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Carnet Deportivo</title>
+  <title>Carnet Digital - Liga Santandereana de Lucha Olímpica</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f4f4f4;
+      background-color: #f2f2f2;
       text-align: center;
+      padding: 20px;
     }
-    .carnet {
-      width: 350px;
+
+    .carnet-contenedor {
+      background-color: #fff;
+      border: 2px solid #003300;
+      border-radius: 10px;
+      width: 300px;
       margin: auto;
       padding: 20px;
-      background: linear-gradient(180deg, #006400, #FFD700); /* verde a amarillo */
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
-      color: #000;
       position: relative;
     }
-    .logo-liga {
+
+    .logo-carnet {
       width: 60px;
       position: absolute;
-      top: 15px;
-      left: 15px;
+      top: 10px;
+      left: 10px;
     }
-    .titulo-liga {
-      font-weight: bold;
-      font-size: 16px;
-      margin-bottom: 10px;
-      margin-top: 0;
-    }
+
     .foto {
-      width: 100%;
-      max-height: 300px;
+      width: 100px;
+      height: 120px;
       object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 10px;
+      border-radius: 5px;
+      margin: 10px auto;
     }
-    canvas {
+
+    .qr {
+      width: 80px;
       margin-top: 10px;
     }
-    .btn-descarga {
-      margin-top: 15px;
-      padding: 8px 16px;
-      background-color: #000;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+
+    h2 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #003300;
+    }
+
+    p {
+      margin: 5px 0;
     }
   </style>
 </head>
 <body>
-  <div class="carnet" id="carnet">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Escudo_de_Santander_%28Colombia%29.svg/640px-Escudo_de_Santander_%28Colombia%29.svg.png" class="logo-liga" alt="Logo Liga" />
-    <h3 class="titulo-liga">LIGA SANTANDEREANA DE LUCHA OLÍMPICA</h3>
-    <img id="foto" class="foto" src="" alt="Foto del deportista" />
-    <h2 id="nombre"></h2>
-    <p id="documento"></p>
-    <p id="emergencia"></p>
-    <p id="sangre"></p>
-    <p id="rol"></p>
-    <p id="cargo" style="display:none;"></p>
-    <canvas id="qrCanvas"></canvas>
-    <button class="btn-descarga" onclick="descargarPDF()">Descargar Carnet</button>
-  </div>
 
-  <!-- QR y PDF Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/qrious"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <h1>Carnet Digital</h1>
+  <div id="carnet"></div>
 
-  <script>
-    const data = JSON.parse(sessionStorage.getItem("carnetData"));
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    if (!data) {
-      document.body.innerHTML = "<p style='color:red;'>Error: No hay datos del carnet.</p>";
-    } else {
-      document.getElementById('nombre').textContent = 'Nombre: ' + data.nombre;
-      document.getElementById('documento').textContent = 'Documento: ' + data.tipoDocumento + ' ' + data.numeroDocumento;
-      document.getElementById('emergencia').textContent = 'Contacto de emergencia: ' + data.emergencia;
-      document.getElementById('sangre').textContent = 'Tipo de sangre: ' + data.sangre;
-      document.getElementById('rol').textContent = 'Rol: ' + data.rol;
-      document.getElementById('foto').src = data.foto;
+    const firebaseConfig = {
+      apiKey: "AIzaSyCqtUXbPvDtOcuZLwFsxll3TD7F3ICQzFo",
+      authDomain: "identilucha.firebaseapp.com",
+      projectId: "identilucha",
+      storageBucket: "identilucha.firebasestorage.app",
+      messagingSenderId: "338101541555",
+      appId: "1:338101541555:web:edb3e5143ba87580c8eec6"
+    };
 
-      if (data.rol === 'Administrativo') {
-        document.getElementById('cargo').style.display = 'block';
-        document.getElementById('cargo').textContent = 'Cargo: ' + data.cargo;
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const docId = urlParams.get("doc");
+
+    async function cargarCarnet() {
+      const ref = doc(db, "carnets", docId);
+      const snapshot = await getDoc(ref);
+
+      if (!snapshot.exists()) {
+        document.getElementById("carnet").innerHTML = "<p>No se encontró el carnet.</p>";
+        return;
       }
 
-      new QRious({
-        element: document.getElementById("qrCanvas"),
-        value: window.location.href,
-        size: 100
-      });
+      const data = snapshot.data();
+
+      document.getElementById("carnet").innerHTML = `
+        <div class="carnet-contenedor">
+          <img src="logo.png" class="logo-carnet" />
+          <h2>LIGA SANTANDEREANA DE LUCHA OLÍMPICA</h2>
+          <img src="${data.fotoURL}" class="foto" />
+          <p><strong>${data.nombre}</strong></p>
+          <p>${data.tipoDocumento}: ${data.documento}</p>
+          <p>Tipo de sangre: ${data.sangre}</p>
+          <p>Contacto emergencia: ${data.emergencia}</p>
+          <p>Rol: ${data.rol}</p>
+          ${data.rol === "ADMINISTRATIVO" ? `<p>Cargo: ${data.cargo}</p>` : ""}
+          <img src="${data.qrURL}" class="qr" />
+        </div>
+      `;
     }
 
-    function descargarPDF() {
-      const carnet = document.getElementById("carnet");
-      html2pdf().from(carnet).set({
-        margin: 0,
-        filename: "carnet_" + data.nombre.replace(/\s+/g, "_") + ".pdf",
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }).save();
-    }
+    cargarCarnet();
   </script>
+
 </body>
 </html>
