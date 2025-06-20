@@ -1,32 +1,77 @@
-<script>
-  const data = JSON.parse(sessionStorage.getItem("carnetData"));
-
-  if (!data) {
-    document.body.innerHTML = "<p>Error: No hay datos del carnet.</p>";
-  } else {
-    document.getElementById('nombre').textContent = 'Nombre: ' + data.nombre;
-    document.getElementById('documento').textContent = 'Documento: ' + data.tipoDocumento + ' ' + data.numeroDocumento;
-    document.getElementById('emergencia').textContent = 'Contacto de emergencia: ' + data.emergencia;
-    document.getElementById('sangre').textContent = 'Tipo de sangre: ' + data.sangre;
-    document.getElementById('rol').textContent = 'Rol: ' + data.rol;
-    document.getElementById('foto').src = data.foto;
-
-    if (data.rol === 'Administrativo') {
-      document.getElementById('cargo').style.display = 'block';
-      document.getElementById('cargo').textContent = 'Cargo: ' + data.cargo;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Carnet Deportivo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+      text-align: center;
     }
+    .carnet {
+      width: 300px;
+      margin: auto;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    img {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    canvas {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="carnet">
+    <img id="foto" src="" alt="Foto del deportista" />
+    <h2 id="nombre"></h2>
+    <p id="documento"></p>
+    <p id="emergencia"></p>
+    <p id="sangre"></p>
+    <p id="rol"></p>
+    <p id="cargo" style="display:none;"></p>
+    <canvas id="qrCanvas"></canvas>
+  </div>
 
-    // QR con la URL actual (simboliza verificación)
-    const canvas = document.getElementById("qrCanvas");
-    const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/npm/qrious";
-    script.onload = () => {
-      new QRious({
-        element: canvas,
-        value: window.location.href,
-        size: 100
-      });
-    };
-    document.body.appendChild(script);
-  }
-</script>
+  <script>
+    const data = JSON.parse(sessionStorage.getItem("carnetData"));
+
+    if (!data) {
+      document.body.innerHTML = "<p style='color:red;'>Error: No hay datos del carnet.</p>";
+    } else {
+      document.getElementById('nombre').textContent = 'Nombre: ' + data.nombre;
+      document.getElementById('documento').textContent = 'Documento: ' + data.tipoDocumento + ' ' + data.numeroDocumento;
+      document.getElementById('emergencia').textContent = 'Contacto de emergencia: ' + data.emergencia;
+      document.getElementById('sangre').textContent = 'Tipo de sangre: ' + data.sangre;
+      document.getElementById('rol').textContent = 'Rol: ' + data.rol;
+      document.getElementById('foto').src = data.foto;
+
+      if (data.rol === 'Administrativo') {
+        document.getElementById('cargo').style.display = 'block';
+        document.getElementById('cargo').textContent = 'Cargo: ' + data.cargo;
+      }
+
+      // QR de verificación
+      const canvas = document.getElementById("qrCanvas");
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/qrious";
+      script.onload = () => {
+        new QRious({
+          element: canvas,
+          value: window.location.href,
+          size: 100
+        });
+      };
+      document.body.appendChild(script);
+    }
+  </script>
+</body>
+</html>
