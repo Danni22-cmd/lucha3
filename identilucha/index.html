@@ -2,29 +2,32 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Identilucha - Liga Santandereana</title>
-  <script defer src="js/script.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Identilucha - Carnet Digital</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Registro de Carnets - Liga Santandereana de Lucha Olímpica</h1>
-  <form id="formulario">
-    <label>Nombres completos: <input type="text" name="nombre" required></label><br/>
-    <label>Tipo de documento: <input type="text" name="tipoDocumento" required></label><br/>
-    <label>Número de identificación: <input type="text" name="numeroDocumento" required></label><br/>
-    <label>Contacto de emergencia: <input type="text" name="emergencia" required></label><br/>
-    <label>Tipo de sangre: <input type="text" name="sangre" required></label><br/>
-    <label>Foto: <input type="file" name="foto" accept="image/*" required></label><br/>
-    <label>Rol:
-      <select name="rol" required>
-        <option value="Deportista">Deportista</option>
-        <option value="Entrenador">Entrenador</option>
-        <option value="Juez">Juez</option>
-        <option value="Administrativo">Administrativo</option>
-      </select>
-    </label><br/>
-    <label id="cargoLabel" style="display:none;">Cargo (si es administrativo): <input type="text" name="cargo" /></label><br/>
-    <button type="submit">Generar carnet</button>
-  </form>
+  <div class="card">
+    <div class="header">
+      <img src="logo.png" class="logo" alt="Logo Liga" />
+      <h1>Liga Santandereana de Lucha Olímpica</h1>
+    </div>
+
+    <div class="body">
+      <img id="foto" class="foto" src="" alt="Foto del deportista" />
+      <div class="info">
+        <p><strong>Nombre:</strong> <span id="nombre"></span></p>
+        <p><strong>Documento:</strong> <span id="documento"></span></p>
+        <p><strong>Contacto de emergencia:</strong> <span id="contacto"></span></p>
+        <p><strong>Tipo de sangre:</strong> <span id="sangre"></span></p>
+        <p><strong>Rol:</strong> <span id="rol"></span></p>
+      </div>
+      <img id="qr" class="qr" src="" alt="QR Code" />
+    </div>
+
+    <button onclick="generarPDF()">Descargar carnet en PDF</button>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
