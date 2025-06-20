@@ -2,16 +2,15 @@ document.getElementById("formulario").addEventListener("submit", function(e) {
   e.preventDefault();
 
   const nombre = document.getElementById("nombre").value;
-  const tipoDoc = document.getElementById("tipoDocumento").value;
-  const numeroDoc = document.getElementById("numeroDocumento").value;
-  const documento = `${tipoDoc} ${numeroDoc}`;
+  const tipoDoc = document.getElementById("tipo-doc").value;
+  const numeroDoc = document.getElementById("numero-doc").value;
   const contacto = document.getElementById("contacto").value;
   const sangre = document.getElementById("sangre").value;
   const rol = document.getElementById("rol").value;
   const fotoInput = document.getElementById("foto");
 
   document.getElementById("nombre-c").textContent = nombre;
-  document.getElementById("documento-c").textContent = documento;
+  document.getElementById("documento-c").textContent = `${tipoDoc} ${numeroDoc}`;
   document.getElementById("contacto-c").textContent = contacto;
   document.getElementById("sangre-c").textContent = sangre;
   document.getElementById("rol-c").textContent = rol;
@@ -20,8 +19,9 @@ document.getElementById("formulario").addEventListener("submit", function(e) {
   reader.onload = function () {
     document.getElementById("foto-preview").src = reader.result;
 
+    // Generar QR con link real
     const qrData = `https://identilucha.vercel.app/carnet/${encodeURIComponent(numeroDoc)}`;
-    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=70x70`;
+    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=60x60`;
     const qrImg = document.getElementById("qr-code");
     qrImg.src = qrCodeUrl;
 
@@ -41,13 +41,13 @@ function generarPDF(carnet) {
     margin: 0,
     filename: 'carnet_digital.pdf',
     image: { type: 'jpeg', quality: 1 },
-    html2canvas: { scale: 5, useCORS: true },
+    html2canvas: { scale: 3, useCORS: true },
     jsPDF: {
       unit: 'in',
-      format: [3.5, 2.2], // Carnet horizontal
+      format: [3.37, 2.125], // EXACTAMENTE 85.6 mm x 53.98 mm
       orientation: 'landscape'
     }
   };
 
-  html2pdf().set(opt).from(carnet).save();
+  html2pdf().from(carnet).set(opt).save();
 }
