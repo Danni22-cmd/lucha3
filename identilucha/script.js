@@ -13,6 +13,23 @@ document.getElementById("carnet-form").addEventListener("submit", function (e) {
   reader.onload = function () {
     const fotoBase64 = reader.result;
 
+    // Crear un identificador único
+    const slug = nombre.trim().toLowerCase().replace(/\s+/g, '-');
+
+    // Guardar datos en localStorage para simulación de base de datos
+    const carnetData = {
+      nombre,
+      documento,
+      contacto,
+      sangre,
+      rol,
+      cargo,
+      foto: fotoBase64
+    };
+
+    localStorage.setItem(`carnet-${slug}`, JSON.stringify(carnetData));
+
+    // Generar HTML
     const carnetHTML = `
       <div id="carnet">
         <img src="logo.png" class="logo" alt="Logo Liga">
@@ -34,16 +51,13 @@ document.getElementById("carnet-form").addEventListener("submit", function (e) {
 
     document.getElementById("carnet-container").innerHTML = carnetHTML;
 
-    // Generar QR
-    const qrData = `${nombre} - CC: ${documento}`;
-    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=60x60`;
+    // Crear el QR con link a la página pública
+    const qrUrl = `https://identilucha.com/ver-carnet.html?slug=${slug}`;
+    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrUrl)}&size=60x60`;
+
     const qrImg = document.getElementById("qr-code");
-    qrImg.onload = () => {
-      console.log("QR cargado correctamente.");
-    };
-    qrImg.onerror = () => {
-      console.error("Error al cargar el QR.");
-    };
+    qrImg.onload = () => console.log("QR cargado correctamente");
+    qrImg.onerror = () => console.error("Error cargando QR");
     qrImg.src = qrCodeUrl;
   };
   reader.readAsDataURL(foto);
