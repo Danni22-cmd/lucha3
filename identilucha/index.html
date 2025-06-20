@@ -1,156 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Generar Carnet</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f1f1f1;
-      display: flex;
-      justify-content: center;
-      padding: 40px;
-    }
-
-    form {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    h2 {
-      text-align: center;
-      color: #146e27;
-    }
-
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 4px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    #btnGenerar {
-      margin-top: 20px;
-      background: #146e27;
-      color: white;
-      border: none;
-      padding: 10px;
-      width: 100%;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #cargoContainer {
-      display: none;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Carnet - Liga Santandereana de Lucha Olímpica</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <form id="formulario">
-    <h2>Generar Carnet</h2>
-    <label>Nombre completo:</label>
-    <input type="text" id="nombres" required />
+  <div class="container">
+    <h1>Generador de Carnet</h1>
+    <form id="carnet-form">
+      <label>Nombre completo:</label>
+      <input type="text" id="nombre" required>
 
-    <label>Tipo de documento:</label>
-    <select id="tipoDocumento" required>
-      <option value="CC">Cédula</option>
-      <option value="TI">Tarjeta de Identidad</option>
-      <option value="CE">Cédula de Extranjería</option>
-    </select>
+      <label>Tipo y número de documento:</label>
+      <input type="text" id="documento" required>
 
-    <label>Número de documento:</label>
-    <input type="text" id="documento" required />
+      <label>Contacto de emergencia:</label>
+      <input type="text" id="contacto" required>
 
-    <label>Teléfono de emergencia:</label>
-    <input type="text" id="emergencia" required />
+      <label>Tipo de sangre:</label>
+      <input type="text" id="sangre" required>
 
-    <label>Tipo de sangre:</label>
-    <input type="text" id="sangre" required />
+      <label>Rol:</label>
+      <select id="rol" required onchange="mostrarCargo(this.value)">
+        <option value="">Selecciona...</option>
+        <option value="Deportista">Deportista</option>
+        <option value="Entrenador">Entrenador</option>
+        <option value="Juez">Juez</option>
+        <option value="Administrativo">Administrativo</option>
+      </select>
 
-    <label>Rol:</label>
-    <select id="rol" required>
-      <option value="DEPORTISTA">Deportista</option>
-      <option value="ENTRENADOR">Entrenador</option>
-      <option value="JUEZ">Juez</option>
-      <option value="ADMINISTRATIVO">Administrativo</option>
-    </select>
+      <div id="cargo-container" style="display: none;">
+        <label>Cargo (si es administrativo):</label>
+        <input type="text" id="cargo">
+      </div>
 
-    <div id="cargoContainer">
-      <label>Cargo administrativo:</label>
-      <input type="text" id="cargo" placeholder="Ej: Presidenta, Tesorero, etc." />
-    </div>
+      <label>Foto:</label>
+      <input type="file" id="foto" accept="image/*" required>
 
-    <label>Foto:</label>
-    <input type="file" id="foto" accept="image/*" required />
+      <button type="submit">Generar carnet</button>
+    </form>
 
-    <button id="btnGenerar" type="submit">Generar Carnet</button>
-  </form>
+    <div id="carnet-container" style="margin-top: 40px;"></div>
+  </div>
+
+  <!-- Librería para PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="script.js"></script>
 
   <script>
-    const formulario = document.getElementById("formulario");
-    const rolSelect = document.getElementById("rol");
-    const cargoContainer = document.getElementById("cargoContainer");
-
-    rolSelect.addEventListener("change", () => {
-      cargoContainer.style.display = rolSelect.value === "ADMINISTRATIVO" ? "block" : "none";
-    });
-
-    formulario.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const nombres = document.getElementById("nombres").value;
-      const tipoDocumento = document.getElementById("tipoDocumento").value;
-      const documento = document.getElementById("documento").value;
-      const emergencia = document.getElementById("emergencia").value;
-      const sangre = document.getElementById("sangre").value;
-      const rol = document.getElementById("rol").value;
-      const cargo = document.getElementById("cargo").value || "";
-      const fotoInput = document.getElementById("foto");
-
-      if (!fotoInput.files.length) {
-        alert("Por favor selecciona una foto.");
-        return;
-      }
-
-      const file = fotoInput.files[0];
-      const reader = new FileReader();
-
-      reader.onload = function () {
-        const fotoBase64 = reader.result;
-
-        // Guardar los datos en localStorage
-        const carnet = {
-          nombres,
-          tipoDocumento,
-          documento,
-          emergencia,
-          sangre,
-          rol,
-          cargo,
-          fotoBase64,
-        };
-
-        localStorage.setItem("carnet", JSON.stringify(carnet));
-
-        // Redirigir a la página del carnet
-        window.location.href = "carnet.html";
-      };
-
-      reader.readAsDataURL(file);
-    });
+    function mostrarCargo(valor) {
+      const cargoDiv = document.getElementById("cargo-container");
+      cargoDiv.style.display = valor === "Administrativo" ? "block" : "none";
+    }
   </script>
 
 </body>
