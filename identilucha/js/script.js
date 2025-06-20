@@ -14,21 +14,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const reader = new FileReader();
     reader.onload = function () {
-      const base64Image = reader.result;
+      const carnetData = {
+        nombre: formData.get("nombre"),
+        tipoDocumento: formData.get("tipoDocumento"),
+        numeroDocumento: formData.get("numeroDocumento"),
+        emergencia: formData.get("emergencia"),
+        sangre: formData.get("sangre"),
+        rol: formData.get("rol"),
+        cargo: formData.get("cargo"),
+        foto: reader.result, // imagen base64
+      };
 
-      const params = new URLSearchParams();
-      params.append("nombre", formData.get("nombre"));
-      params.append("tipoDocumento", formData.get("tipoDocumento"));
-      params.append("numeroDocumento", formData.get("numeroDocumento"));
-      params.append("emergencia", formData.get("emergencia"));
-      params.append("sangre", formData.get("sangre"));
-      params.append("rol", formData.get("rol"));
-      params.append("cargo", formData.get("cargo") || "");
-      params.append("foto", base64Image);
+      // Guardamos los datos en sessionStorage
+      sessionStorage.setItem("carnetData", JSON.stringify(carnetData));
 
-      window.location.href = `carnet.html?${params.toString()}`;
+      // Redirigimos sin pasar datos por URL
+      window.location.href = "carnet.html";
     };
 
-    reader.readAsDataURL(file); // Leer la imagen como base64
+    reader.readAsDataURL(file);
   });
 });

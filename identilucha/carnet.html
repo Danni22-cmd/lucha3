@@ -1,49 +1,32 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Carnet Generado</title>
-</head>
-<body>
-  <div id="carnet">
-    <h2>Liga Santandereana de Lucha Olímpica</h2>
-    <p id="nombre"></p>
-    <p id="documento"></p>
-    <p id="emergencia"></p>
-    <p id="sangre"></p>
-    <p id="rol"></p>
-    <p id="cargo" style="display:none;"></p>
-    <img id="foto" width="120" /><br/>
-    <canvas id="qrCanvas"></canvas>
-    <br/><button onclick="window.print()">Descargar PDF</button>
-  </div>
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    document.getElementById('nombre').textContent = 'Nombre: ' + params.get('nombre');
-    document.getElementById('documento').textContent = 'Documento: ' + params.get('tipoDocumento') + ' ' + params.get('numeroDocumento');
-    document.getElementById('emergencia').textContent = 'Contacto de emergencia: ' + params.get('emergencia');
-    document.getElementById('sangre').textContent = 'Tipo de sangre: ' + params.get('sangre');
-    document.getElementById('rol').textContent = 'Rol: ' + params.get('rol');
-    document.getElementById('foto').src = params.get('foto');
+<script>
+  const data = JSON.parse(sessionStorage.getItem("carnetData"));
 
-    if (params.get('rol') === 'Administrativo') {
+  if (!data) {
+    document.body.innerHTML = "<p>Error: No hay datos del carnet.</p>";
+  } else {
+    document.getElementById('nombre').textContent = 'Nombre: ' + data.nombre;
+    document.getElementById('documento').textContent = 'Documento: ' + data.tipoDocumento + ' ' + data.numeroDocumento;
+    document.getElementById('emergencia').textContent = 'Contacto de emergencia: ' + data.emergencia;
+    document.getElementById('sangre').textContent = 'Tipo de sangre: ' + data.sangre;
+    document.getElementById('rol').textContent = 'Rol: ' + data.rol;
+    document.getElementById('foto').src = data.foto;
+
+    if (data.rol === 'Administrativo') {
       document.getElementById('cargo').style.display = 'block';
-      document.getElementById('cargo').textContent = 'Cargo: ' + params.get('cargo');
+      document.getElementById('cargo').textContent = 'Cargo: ' + data.cargo;
     }
 
+    // QR con la URL actual (simboliza verificación)
     const canvas = document.getElementById("qrCanvas");
-    const url = window.location.href;
     const script = document.createElement("script");
     script.src = "https://cdn.jsdelivr.net/npm/qrious";
     script.onload = () => {
       new QRious({
         element: canvas,
-        value: url,
+        value: window.location.href,
         size: 100
       });
     };
     document.body.appendChild(script);
-  </script>
-</body>
-</html>
+  }
+</script>
