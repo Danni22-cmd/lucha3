@@ -20,7 +20,7 @@ document.getElementById("formulario").addEventListener("submit", function(e) {
   reader.onload = function () {
     document.getElementById("foto-preview").src = reader.result;
 
-    // Generar QR con enlace (aquí puedes cambiar la URL base si quieres otra)
+    // Generar QR con enlace personalizado
     const qrData = `https://identilucha.vercel.app/carnet/${encodeURIComponent(numeroDoc)}`;
     const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=60x60`;
     const qrImg = document.getElementById("qr-code");
@@ -28,7 +28,7 @@ document.getElementById("formulario").addEventListener("submit", function(e) {
 
     // Mostrar carnet y generar PDF
     const carnet = document.getElementById("carnet");
-    carnet.style.display = "block";
+    carnet.style.display = "flex";
 
     setTimeout(() => {
       generarPDF(carnet);
@@ -45,8 +45,8 @@ function generarPDF(carnet) {
     image: { type: 'jpeg', quality: 1 },
     html2canvas: { scale: 3, useCORS: true },
     jsPDF: {
-      unit: 'in',
-      format: [3.5, 2.25],  // Carnet horizontal en pulgadas
+      unit: 'px',
+      format: [336, 216], // exact size in pixels for 3.5x2.25 inches at 96 DPI
       orientation: 'landscape'
     }
   };
