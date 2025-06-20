@@ -132,3 +132,43 @@
       const emergencia = document.getElementById("emergencia").value;
       const sangre = document.getElementById("sangre").value;
       const rol = document.getElementById("rol").value;
+      const cargo = document.getElementById("cargo").value || "";
+      const fotoInput = document.getElementById("foto");
+
+      if (!fotoInput.files.length) {
+        alert("Por favor selecciona una foto.");
+        return;
+      }
+
+      const file = fotoInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = async function () {
+        const fotoBase64 = reader.result;
+
+        try {
+          const docRef = await addDoc(collection(db, "carnets"), {
+            nombres,
+            tipoDocumento,
+            documento,
+            emergencia,
+            sangre,
+            rol,
+            cargo,
+            fotoBase64,
+          });
+
+          const id = docRef.id;
+          window.location.href = `carnet.html?id=${id}`;
+        } catch (error) {
+          console.error("Error al guardar el carnet:", error);
+          alert("Hubo un error al guardar el carnet.");
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
+  </script>
+
+</body>
+</html>
