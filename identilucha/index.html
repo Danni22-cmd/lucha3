@@ -99,22 +99,7 @@
     <button id="btnGenerar" type="submit">Generar Carnet</button>
   </form>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCqtUXbPvDtOcuZLwFsxll3TD7F3ICQzFo",
-      authDomain: "identilucha.firebaseapp.com",
-      projectId: "identilucha",
-      storageBucket: "identilucha.appspot.com",
-      messagingSenderId: "338101541555",
-      appId: "1:338101541555:web:edb3e5143ba87580c8eec6"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
+  <script>
     const formulario = document.getElementById("formulario");
     const rolSelect = document.getElementById("rol");
     const cargoContainer = document.getElementById("cargoContainer");
@@ -143,27 +128,25 @@
       const file = fotoInput.files[0];
       const reader = new FileReader();
 
-      reader.onload = async function () {
+      reader.onload = function () {
         const fotoBase64 = reader.result;
 
-        try {
-          const docRef = await addDoc(collection(db, "carnets"), {
-            nombres,
-            tipoDocumento,
-            documento,
-            emergencia,
-            sangre,
-            rol,
-            cargo,
-            fotoBase64,
-          });
+        // Guardar los datos en localStorage
+        const carnet = {
+          nombres,
+          tipoDocumento,
+          documento,
+          emergencia,
+          sangre,
+          rol,
+          cargo,
+          fotoBase64,
+        };
 
-          const id = docRef.id;
-          window.location.href = `carnet.html?id=${id}`;
-        } catch (error) {
-          console.error("Error al guardar el carnet:", error);
-          alert("Hubo un error al guardar el carnet.");
-        }
+        localStorage.setItem("carnet", JSON.stringify(carnet));
+
+        // Redirigir a la página del carnet
+        window.location.href = "carnet.html";
       };
 
       reader.readAsDataURL(file);
