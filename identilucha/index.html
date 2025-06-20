@@ -1,61 +1,51 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Carnet - Liga Santandereana de Lucha Olímpica</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generador de Carnets - Liga Santandereana de Lucha Olímpica</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <form id="formulario">
+    <h1>Generar Carnet Deportivo</h1>
+    <input type="text" id="nombre" placeholder="Nombres completos" required />
+    <input type="text" id="documento" placeholder="Tipo y número de documento" required />
+    <input type="text" id="contacto" placeholder="Número de contacto de emergencia" required />
+    <input type="text" id="sangre" placeholder="Tipo de sangre" required />
+    <select id="rol">
+      <option value="DEPORTISTA">Deportista</option>
+      <option value="ENTRENADOR">Entrenador</option>
+      <option value="JUEZ">Juez</option>
+      <option value="ADMINISTRATIVO - PRESIDENTE">Presidente</option>
+      <option value="ADMINISTRATIVO - TESORERO">Tesorero</option>
+      <option value="ADMINISTRATIVO - COMITÉ">Comité Interdisciplinario</option>
+    </select>
+    <input type="file" id="foto" accept="image/*" required />
+    <button type="submit">Generar Carnet</button>
+  </form>
 
-  <div class="container">
-    <h1>Generador de Carnet</h1>
-    <form id="carnet-form">
-      <label>Nombre completo:</label>
-      <input type="text" id="nombre" required>
-
-      <label>Tipo y número de documento:</label>
-      <input type="text" id="documento" required>
-
-      <label>Contacto de emergencia:</label>
-      <input type="text" id="contacto" required>
-
-      <label>Tipo de sangre:</label>
-      <input type="text" id="sangre" required>
-
-      <label>Rol:</label>
-      <select id="rol" required onchange="mostrarCargo(this.value)">
-        <option value="">Selecciona...</option>
-        <option value="Deportista">Deportista</option>
-        <option value="Entrenador">Entrenador</option>
-        <option value="Juez">Juez</option>
-        <option value="Administrativo">Administrativo</option>
-      </select>
-
-      <div id="cargo-container" style="display: none;">
-        <label>Cargo (si es administrativo):</label>
-        <input type="text" id="cargo">
+  <div id="carnet" style="display:none;">
+    <div class="carnet-contenedor">
+      <img src="logo.png" class="logo" />
+      <div class="contenido">
+        <h2>LIGA SANTANDEREANA DE LUCHA OLÍMPICA</h2>
+        <div class="datos">
+          <img id="foto-preview" class="foto" />
+          <div class="texto">
+            <p><strong>Nombre:</strong> <span id="nombre-c"></span></p>
+            <p><strong>Documento:</strong> <span id="documento-c"></span></p>
+            <p><strong>Emergencia:</strong> <span id="contacto-c"></span></p>
+            <p><strong>Tipo de Sangre:</strong> <span id="sangre-c"></span></p>
+            <p><strong>Rol:</strong> <span id="rol-c"></span></p>
+          </div>
+        </div>
       </div>
-
-      <label>Foto:</label>
-      <input type="file" id="foto" accept="image/*" required>
-
-      <button type="submit">Generar carnet</button>
-    </form>
-
-    <div id="carnet-container" style="margin-top: 40px;"></div>
+      <img id="qr-code" class="qr" />
+    </div>
   </div>
 
-  <!-- Librería para PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="script.js"></script>
-
-  <script>
-    function mostrarCargo(valor) {
-      const cargoDiv = document.getElementById("cargo-container");
-      cargoDiv.style.display = valor === "Administrativo" ? "block" : "none";
-    }
-  </script>
-
 </body>
 </html>
